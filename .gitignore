@@ -1,0 +1,28 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# Banco de dados local
+db.sqlite3
+db.sqlite3-journal
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Cache e ferramentas
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
