@@ -34,13 +34,12 @@ quote-style = "single"
 addopts = "-p no:warnings"
 
 [tool.taskipy.tasks]
-lint = "ruff check ."
-pre_format = "ruff check --fix ."
-format = "ruff format ."
 run = "python manage.py runserver"
 test = "pytest -s -x --cov=config --cov-report=term-missing -vv"
 pre_test = "task lint"
 post_test = "coverage report"
 
-[tool.ruff.lint.per-file-ignores]
-"manage.py" = ["PLC0415"]
+lint = "ruff check . --fix"
+format = "ruff format ."
+pre_format = "ruff check . --fix"
+check = "ruff check ."
