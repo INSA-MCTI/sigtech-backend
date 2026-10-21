@@ -60,7 +60,7 @@ class CarreiraAdmin(admin.ModelAdmin):
 
 @admin.register(Cargo)
 class CargoAdmin(admin.ModelAdmin):
-    list_display = ['descricao', 'nivel', 'classe', 'cargo', 'deletado']
+    list_display = ['descricao', 'nivel', 'siape', 'cargo', 'deletado']
 
 
 @admin.register(Unidade)

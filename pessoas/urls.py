@@ -54,6 +54,11 @@ urlpatterns = [
         name='dado_estatistico_lista',
     ),
     path(
+        'estatisticos/servidores/',
+        views.estatistico_servidores,
+        name='estatistico_servidores',
+    ),
+    path(
         'estatisticos/criar/',
         views.dado_estatistico_criar,
         name='dado_estatistico_criar',

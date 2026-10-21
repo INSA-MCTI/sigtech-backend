@@ -15,6 +15,33 @@ from .models import (
 
 
 class PessoaForm(forms.ModelForm):
+    genero = forms.ChoiceField(
+        label='Gênero',
+        choices=[('', 'Selecione'), ('M', 'M'), ('F', 'F')],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )
+    titulacao = forms.ChoiceField(
+        label='Titulação',
+        choices=[('', 'Selecione')] + [
+            (valor, valor) for valor in (
+                'Técnico', 'Graduação', 'Especialização', 'Mestrado',
+                'Doutorado', 'Pós-doutorado', 'não possui',
+            )
+        ],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )
+    escolaridade = forms.ChoiceField(
+        label='Escolaridade',
+        choices=[('', 'Selecione')] + [
+            (valor, valor) for valor in (
+                'Ensino Fundamental', 'Ensino Médio', 'Ensino Superior',
+            )
+        ],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )
     senha = forms.CharField(
         widget=forms.PasswordInput(
             attrs={'class': 'form-control'}
@@ -50,12 +77,15 @@ class PessoaForm(forms.ModelForm):
         ]
         widgets = {
             'dt_nascimento': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
             'dt_admissao': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
             'dt_demissao': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
         }
@@ -137,9 +167,11 @@ class PessoaCargoForm(forms.ModelForm):
         fields = ['cargo', 'dt_inicio', 'dt_fim', 'atual']
         widgets = {
             'dt_inicio': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
             'dt_fim': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
         }
@@ -157,9 +189,11 @@ class PessoaUnidadeForm(forms.ModelForm):
         fields = ['unidade', 'dt_inicio', 'dt_fim', 'chefia', 'atual']
         widgets = {
             'dt_inicio': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
             'dt_fim': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
         }

@@ -11,16 +11,28 @@ def anos_completos(inicio, referencia):
     )
 
 
-def distribuicao(valores):
+def distribuicao(valores, ids=None):
+    valores = list(valores)
     contagens = Counter(
         str(valor).strip() if valor and str(valor).strip()
         else 'Não informado'
         for valor in valores
     )
-    return [
+    linhas = [
         {'rotulo': rotulo, 'total': total}
         for rotulo, total in sorted(contagens.items())
     ]
+    if ids is not None:
+        membros = {linha['rotulo']: [] for linha in linhas}
+        for pessoa_id, valor in zip(ids, valores):
+            rotulo = (
+                str(valor).strip() if valor and str(valor).strip()
+                else 'Não informado'
+            )
+            membros[rotulo].append(pessoa_id)
+        for linha in linhas:
+            linha['ids'] = membros[linha['rotulo']]
+    return linhas
 
 
 def tabela_faixas(registros, campo, referencia, faixas):
@@ -32,6 +44,11 @@ def tabela_faixas(registros, campo, referencia, faixas):
         rotulo='Não informado / data inválida',
         masculino=0, feminino=0, outros=0, total=0,
     ))
+    for linha in linhas:
+        linha['ids'] = []
+        linha['ids_genero'] = {
+            genero: [] for genero in ('masculino', 'feminino', 'outros')
+        }
     idades = []
     for pessoa in registros:
         anos = anos_completos(pessoa[campo], referencia)
@@ -47,6 +64,9 @@ def tabela_faixas(registros, campo, referencia, faixas):
         coluna = {'M': 'masculino', 'F': 'feminino'}.get(genero, 'outros')
         linhas[indice][coluna] += 1
         linhas[indice]['total'] += 1
+        if 'id' in pessoa:
+            linhas[indice]['ids'].append(pessoa['id'])
+            linhas[indice]['ids_genero'][coluna].append(pessoa['id'])
     total = len(registros)
     acumulado = 0
     totais_genero = {
@@ -89,15 +109,15 @@ def relatorio_pessoal(referencia):
     cargos = dict(PessoaCargo.objects.filter(
         pessoa__deletado=False, deletado=False, atual=True,
         cargo__deletado=False,
-    ).values_list('pessoa_id', 'cargo__descricao'))
+    ).order_by('pessoa_id', 'id').values_list('pessoa_id', 'cargo__descricao'))
     niveis = dict(PessoaCargo.objects.filter(
         pessoa__deletado=False, deletado=False, atual=True,
         cargo__deletado=False,
-    ).values_list('pessoa_id', 'cargo__nivel'))
+    ).order_by('pessoa_id', 'id').values_list('pessoa_id', 'cargo__nivel'))
     unidades = dict(PessoaUnidade.objects.filter(
         pessoa__deletado=False, deletado=False, atual=True,
         unidade__deletado=False,
-    ).values_list('pessoa_id', 'unidade__sigla'))
+    ).order_by('pessoa_id', 'id').values_list('pessoa_id', 'unidade__sigla'))
     grupos = [
         ('Situação', [p['id_situacao__descricao'] for p in registros]),
         ('Titulação', [p['titulacao'] for p in registros]),
@@ -120,7 +140,10 @@ def relatorio_pessoal(referencia):
     return {
         'total_pessoal': len(registros),
         'grupos': [
-            {'titulo': titulo, 'linhas': distribuicao(valores)}
+            {
+                'titulo': titulo,
+                'linhas': distribuicao(valores, [p['id'] for p in registros]),
+            }
             for titulo, valores in grupos
         ],
         'faixas_etarias': etarias,
@@ -128,3 +151,32 @@ def relatorio_pessoal(referencia):
         'idade_media': media,
         'referencia': referencia,
     }
+
+
+def membros_indicador(relatorio, grupo, indice, genero='', acumulado=False):
+    if genero not in ('', 'masculino', 'feminino', 'outros'):
+        raise ValueError('Gênero inválido')
+    grupos = {g['titulo']: g['linhas'] for g in relatorio['grupos']}
+    grupos.update({
+        'Faixa etária': relatorio['faixas_etarias'],
+        'Tempo de serviço': relatorio['tempo_servico'],
+    })
+    linhas = grupos.get(grupo)
+    if linhas is None or not 0 <= indice < len(linhas):
+        raise ValueError('Indicador inválido')
+    if genero and grupo not in ('Faixa etária', 'Tempo de serviço'):
+        raise ValueError('Filtro de gênero inválido para este indicador')
+    selecionadas = linhas[:indice + 1] if acumulado else [linhas[indice]]
+    ids = {
+        pessoa_id
+        for linha in selecionadas
+        for pessoa_id in (
+            linha['ids_genero'][genero] if genero else linha['ids']
+        )
+    }
+    titulo = f"{grupo}: {linhas[indice]['rotulo']}"
+    if genero:
+        titulo += f' ({genero})'
+    if acumulado:
+        titulo += ' - acumulado até esta faixa'
+    return ids, titulo

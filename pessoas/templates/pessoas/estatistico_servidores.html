@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Servidores por indicador - SIGTEC{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+    <h4>{{ titulo }}</h4>
+    <a class="btn btn-outline-secondary" href="{% url 'pessoas:dado_estatistico_lista' %}?referencia={{ referencia|date:'Y-m-d' }}">Voltar às estatísticas</a>
+</div>
+<p>Data de referência: {{ referencia|date:"d/m/Y" }}. <strong>{{ pagina.paginator.count }} servidor(es)</strong> neste indicador.</p>
+<p class="small text-muted">As classificações representam o cadastro atual. Esta consulta apresenta somente os nomes, sem dados pessoais adicionais.</p>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light"><tr><th scope="col">Servidor</th></tr></thead>
+            <tbody>
+                {% for servidor in pagina %}
+                <tr><td>{{ servidor.nome }}</td></tr>
+                {% empty %}
+                <tr><td class="text-muted text-center py-4">Nenhum servidor neste indicador.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% if pagina.has_other_pages %}
+<nav class="d-flex justify-content-between align-items-center mt-3" aria-label="Paginação dos servidores">
+    {% if pagina.has_previous %}
+    <a class="btn btn-outline-primary" href="?{{ parametros }}&amp;pagina={{ pagina.previous_page_number }}">Anterior</a>
+    {% endif %}
+    <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}
+    <a class="btn btn-outline-primary" href="?{{ parametros }}&amp;pagina={{ pagina.next_page_number }}">Próxima</a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

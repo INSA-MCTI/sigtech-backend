@@ -51,7 +51,7 @@ class Cargo(models.Model):
     id = models.AutoField(primary_key=True)
     descricao = models.CharField(max_length=200)
     nivel = models.CharField(max_length=50, blank=True)
-    classe = models.CharField(max_length=50, blank=True)
+    siape = models.CharField(max_length=50, blank=True)
     cargo = models.CharField(max_length=200, blank=True)
     padrao = models.CharField(max_length=50, blank=True)
     deletado = models.BooleanField(default=False)

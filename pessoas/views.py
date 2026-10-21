@@ -2,17 +2,20 @@ import csv
 import io
 import json
 from datetime import date
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Model, Q
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.urls import reverse
 
-from .estatisticas import relatorio_pessoal
+from .estatisticas import membros_indicador, relatorio_pessoal
 from .forms import (
     ArquivoForm,
     DadoEstatisticoForm,
@@ -397,6 +400,63 @@ def _estatisticos_visiveis(pessoa):
     return dados.order_by('-id')
 
 
+def _links_indicadores(relatorio):
+    grupos = [(g['titulo'], g['linhas']) for g in relatorio['grupos']]
+    grupos += [
+        ('Faixa etária', relatorio['faixas_etarias']),
+        ('Tempo de serviço', relatorio['tempo_servico']),
+    ]
+    rota = reverse('pessoas:estatistico_servidores')
+    for titulo, linhas in grupos:
+        for indice, linha in enumerate(linhas):
+            parametros = {
+                'grupo': titulo, 'indice': indice,
+                'referencia': relatorio['referencia'].isoformat(),
+            }
+            linha['url'] = rota + '?' + urlencode(parametros)
+            linha['url_acumulado'] = rota + '?' + urlencode({
+                **parametros, 'acumulado': '1',
+            })
+            for genero in ('masculino', 'feminino', 'outros'):
+                linha['url_' + genero] = rota + '?' + urlencode({
+                    **parametros, 'genero': genero,
+                })
+            for genero, dados in zip(
+                ('masculino', 'feminino'), linha.get('generos', []),
+            ):
+                dados['url'] = linha['url_' + genero]
+                dados['url_acumulado'] = rota + '?' + urlencode({
+                    **parametros, 'genero': genero, 'acumulado': '1',
+                })
+
+
+@_login_required
+def estatistico_servidores(request):
+    try:
+        referencia = date.fromisoformat(request.GET.get('referencia', ''))
+        indice = int(request.GET.get('indice', ''))
+        if request.GET.get('acumulado', '') not in ('', '1'):
+            raise ValueError('Acumulado inválido')
+        relatorio = relatorio_pessoal(referencia)
+        ids, titulo = membros_indicador(
+            relatorio, request.GET.get('grupo', ''), indice,
+            request.GET.get('genero', ''),
+            request.GET.get('acumulado') == '1',
+        )
+    except (ValueError, TypeError) as erro:
+        raise Http404('Indicador ou data de referência inválidos.') from erro
+    servidores = Pessoa.objects.filter(
+        deletado=False, pk__in=ids,
+    ).order_by('nome', 'pk').values('id', 'nome')
+    pagina = Paginator(servidores, 50).get_page(request.GET.get('pagina'))
+    parametros = request.GET.copy()
+    parametros.pop('pagina', None)
+    return render(request, 'pessoas/estatistico_servidores.html', {
+        'pessoa': request.pessoa, 'pagina': pagina, 'titulo': titulo,
+        'referencia': referencia, 'parametros': parametros.urlencode(),
+    })
+
+
 @_login_required
 def dado_estatistico_lista(request):
     dados = _estatisticos_visiveis(request.pessoa)
@@ -439,6 +499,7 @@ def dado_estatistico_lista(request):
                     round(linha['percentual_acumulado'], 2),
                 ])
         return response
+    _links_indicadores(relatorio)
     return render(request, 'pessoas/dado_estatistico_lista.html', {
         **relatorio,
         'dados': dados,
