@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} - SIGTEC{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">{{ titulo }}</h4>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">{{ form.errors }}</div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Login</label>
+                    {{ form.login }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Senha</label>
+                    {{ form.senha }}
+                    {% if form.instance.pk %}
+                    <small class="text-muted">Deixe vazio para manter a senha atual.</small>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Nome</label>
+                    {{ form.nome }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">CPF</label>
+                    {{ form.cpf }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Matrícula</label>
+                    {{ form.matricula }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">E-mail</label>
+                    {{ form.email }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Telefone</label>
+                    {{ form.telefone }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Data Nascimento</label>
+                    {{ form.dt_nascimento }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Data Admissão</label>
+                    {{ form.dt_admissao }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Data Demissão</label>
+                    {{ form.dt_demissao }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Gênero</label>
+                    {{ form.genero }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Situação</label>
+                    {{ form.id_situacao }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Carreira</label>
+                    {{ form.id_carreira }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Escolaridade</label>
+                    {{ form.escolaridade }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Titulação</label>
+                    {{ form.titulacao }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Nível de Acesso</label>
+                    {{ form.nivel_acesso }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Responsável</label>
+                    {{ form.id_responsavel }}
+                </div>
+            </div>
+            <hr>
+            <h6>Endereço</h6>
+            <div class="row">
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">CEP</label>
+                    {{ form.cep }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Logradouro</label>
+                    {{ form.logradouro }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Complemento</label>
+                    {{ form.complemento }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Bairro</label>
+                    {{ form.bairro }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Cidade</label>
+                    {{ form.cidade }}
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">Estado</label>
+                    {{ form.estado }}
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Salvar
+                </button>
+                <a href="{% url 'pessoas:pessoa_lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

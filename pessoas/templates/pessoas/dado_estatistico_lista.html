@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Dados Estatísticos - SIGTEC{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-heading { background: #006c91; color: white; padding: .65rem 1rem; }
+    .stat-box { background: #dfedfc; border: 1px solid #83a6c7; height: 155px; overflow: auto; padding: .5rem; }
+    .stat-row { display: flex; justify-content: space-between; border-bottom: 1px solid #c4d8ed; padding: .2rem; }
+    .stat-table th { background: #006c91; color: white; }
+    .stat-table td { background: #edf5fc; }
+    .stat-chart { width: 100%; accent-color: #006c91; }
+    @media print {
+        .sidebar, .navbar, .no-print { display: none !important; }
+        .main-content { width: 100%; background: white; }
+        .stat-box { height: auto; overflow: visible; }
+        .card { break-inside: avoid; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between gap-2 mb-3 no-print">
+    <h4>Consultar Dados Estatísticos do Pessoal</h4>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.print()">Imprimir</button>
+        <button type="button" id="toggle-charts" class="btn btn-outline-primary btn-sm" aria-expanded="false">Gerar gráfico</button>
+        <a href="?referencia={{ referencia|date:'Y-m-d' }}&amp;exportar=csv" class="btn btn-outline-success btn-sm">Exportar relatório CSV</a>
+        <a href="{% url 'pessoas:dashboard' %}" class="btn btn-outline-secondary btn-sm">Fechar</a>
+    </div>
+</div>
+<div class="card mb-4">
+    <div class="stat-heading">Estatísticas do quadro de pessoal</div>
+    <div class="card-body">
+        <form method="get" class="d-flex flex-wrap align-items-end gap-3 mb-3 no-print">
+            <div>
+                <label for="referencia" class="form-label">Data de referência</label>
+                <input id="referencia" type="date" name="referencia" class="form-control" value="{{ referencia|date:'Y-m-d' }}" required>
+            </div>
+            <button class="btn btn-primary" type="submit">Consultar</button>
+            <span class="text-muted">Total de pessoas não desativadas: <strong>{{ total_pessoal }}</strong></span>
+        </form>
+        {% if erro_referencia %}<p class="alert alert-warning">{{ erro_referencia }}</p>{% endif %}
+        <p class="small text-muted">Referência: {{ referencia|date:"d/m/Y" }}. A data recalcula idade e tempo de serviço; as classificações representam o cadastro atual, não um quadro histórico.</p>
+        <div class="row g-3">
+            {% for grupo in grupos %}
+            <section class="col-12 col-lg-6">
+                <h6>{{ grupo.titulo }}</h6>
+                <div class="stat-box" tabindex="0" aria-label="{{ grupo.titulo }}">
+                    {% for linha in grupo.linhas %}
+                    <div class="stat-row"><span>{{ linha.rotulo }}</span><strong>{{ linha.total }}</strong></div>
+                    {% empty %}
+                    <p class="text-muted">Nenhum registro.</p>
+                    {% endfor %}
+                </div>
+                <div class="charts mt-2" hidden>
+                    {% for linha in grupo.linhas %}
+                    <label class="small d-block">{{ linha.rotulo }}: {{ linha.total }}
+                        <progress class="stat-chart" max="{{ total_pessoal|default:1 }}" value="{{ linha.total }}">{{ linha.total }}</progress>
+                    </label>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+        </div>
+        <details class="mt-3">
+            <summary>Ajuda e classificações indisponíveis</summary>
+            <p class="small mt-2">Tipo (Servidor/Pessoal Externo), atuação, cargo em comissão e DAS não possuem campos de classificação no banco atual. Não são inferidos do perfil de acesso. Datas ausentes ou posteriores à referência aparecem como não informadas. O total inclui gêneros diferentes de M/F ou não preenchidos.</p>
+        </details>
+    </div>
+</div>
+
+<section class="card mb-4">
+    <h5 class="stat-heading mb-0">Tempo de serviço na instituição</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm stat-table mb-0">
+            <thead><tr><th>Faixa (anos completos)</th><th>Masculino</th><th>Feminino</th><th>Outros / não informado</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for linha in tempo_servico %}
+                <tr><td>{{ linha.rotulo }}</td><td>{{ linha.masculino }}</td><td>{{ linha.feminino }}</td><td>{{ linha.outros }}</td><td>{{ linha.total }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<section class="card mb-4">
+    <h5 class="stat-heading mb-0">Faixa etária</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm stat-table mb-0">
+            <thead><tr><th>Faixa</th><th>Masculino</th><th>Feminino</th><th>Outros / não informado</th><th>Total</th><th>% geral</th><th>Acumulado</th><th>% acumulado</th></tr></thead>
+            <tbody>
+                {% for linha in faixas_etarias %}
+                <tr><td>{{ linha.rotulo }}</td><td>{{ linha.masculino }}</td><td>{{ linha.feminino }}</td><td>{{ linha.outros }}</td><td>{{ linha.total }}</td><td>{{ linha.percentual|floatformat:2 }}%</td><td>{{ linha.acumulado }}</td><td>{{ linha.percentual_acumulado|floatformat:2 }}%</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="m-3">Idade média nesta data:
+        {% if idade_media is not None %}<strong>{{ idade_media|floatformat:1 }} anos</strong>{% else %}Não disponível{% endif %}
+    </p>
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm stat-table mb-0">
+            <caption class="px-3">Distribuição e percentuais acumulados por gênero</caption>
+            <thead>
+                <tr><th rowspan="2">Faixa</th><th colspan="5">Masculino</th><th colspan="5">Feminino</th><th colspan="3">Geral</th></tr>
+                <tr><th>Qtd.</th><th>% masc.</th><th>% geral</th><th>Acum.</th><th>% acum.</th><th>Qtd.</th><th>% fem.</th><th>% geral</th><th>Acum.</th><th>% acum.</th><th>Total</th><th>% geral</th><th>Acum.</th></tr>
+            </thead>
+            <tbody>
+                {% for linha in faixas_etarias %}
+                <tr>
+                    <td>{{ linha.rotulo }}</td>
+                    {% for genero in linha.generos %}
+                    <td>{{ genero.quantidade }}</td><td>{{ genero.percentual|floatformat:2 }}</td><td>{{ genero.percentual_geral|floatformat:2 }}</td><td>{{ genero.acumulado }}</td><td>{{ genero.percentual_acumulado|floatformat:2 }}</td>
+                    {% endfor %}
+                    <td>{{ linha.total }}</td><td>{{ linha.percentual|floatformat:2 }}</td><td>{{ linha.acumulado }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5>Indicadores complementares</h5>
+    <div>
+        <a href="{% url 'pessoas:exportar_estatisticos_csv' %}" class="btn btn-outline-success btn-sm">
+            <i class="bi bi-download"></i> Exportar CSV
+        </a>
+        {% if pessoa.perfil_acesso == 'adm' or pessoa.perfil_acesso == 'rh' %}
+        <a href="{% url 'pessoas:dado_estatistico_criar' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Novo
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Pessoa</th>
+                    <th>Categoria</th>
+                    <th>Indicador</th>
+                    <th>Valor</th>
+                    <th>Período</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in dados %}
+                <tr>
+                    <td>{% if d.pessoa %}{{ d.pessoa.nome }}{% else %}-{% endif %}</td>
+                    <td>{{ d.categoria }}</td>
+                    <td>{{ d.indicador }}</td>
+                    <td>{{ d.valor }}</td>
+                    <td>{{ d.periodo }}</td>
+                    <td>{{ d.observacao|truncatewords:10 }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-muted text-center py-4">Nenhum dado estatístico.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('toggle-charts').addEventListener('click', function () {
+        const show = this.getAttribute('aria-expanded') !== 'true';
+        document.querySelectorAll('.charts').forEach(chart => { chart.hidden = !show; });
+        this.setAttribute('aria-expanded', String(show));
+        this.textContent = show ? 'Ocultar gráfico' : 'Gerar gráfico';
+    });
+</script>
+{% endblock %}
