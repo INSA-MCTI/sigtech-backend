@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 21/10/2026 às 19:38
+-- Tempo de geração: 22/10/2026 às 14:22
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.0.30
 
@@ -363,15 +363,18 @@ CREATE TABLE `django_session` (
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 ('0wqwnj84gy9rjrw8y0qstn61nnc30iym', 'e30:1xJa6x:XKN5S_vzdaejhPZSExJgBk7hrseV59nLyLNT5nTNE3w', '2026-11-04 17:28:23.309509'),
+('2o8brs1b5vs7tz8pepk7lwhtbt6ara4v', 'eyJwZXNzb2FfaWQiOjF9:1xJaiq:Ml6vgxc6xVbvNWADvtbTMmjDlTB530J5lNGYQHAnIk8', '2026-11-04 18:07:32.427712'),
 ('bto4s6k5z4hb4ib9rvrkuf6ywd9gs8m7', 'eyJwZXNzb2FfaWQiOjF9:1xJZzY:ZhHjG-YssqAi4TIhILyP62lo8aZ2W5ERMPE9triD2Q4', '2026-11-04 17:20:44.312897'),
+('elbtnkt2gz7oghiu11dq11wd1zdsodan', 'eyJwZXNzb2FfaWQiOjJ9:1xJapV:LZ4olbYNFONFRnt9PzmQJsi2wC9kZQi03L3Ivheq5Mw', '2026-11-04 18:14:25.222901'),
+('fl2kt9y6j1lrdvlajjhvjs70sd0vk3w8', 'eyJwZXNzb2FfaWQiOjF9:1xJaqg:fiMrfoBdOXPlqEgs8TyBEWP5GcxTRRHsOJ8grDcd90A', '2026-11-04 18:15:38.922913'),
 ('fvh3s64kkwgoggptrarklcv3o8ufhnlz', 'eyJwZXNzb2FfaWQiOjF9:1xJDuG:dhU1QyO52nAMtJwfDzYybZnNNpa2hE2SUeFeP7qTxdU', '2026-11-03 17:45:48.957299'),
 ('g4lzywdmzgdq12jtxkojm8mosbgkggl9', 'eyJwZXNzb2FfaWQiOjF9:1xJZdR:YvMoj0Q283Yh85ifyAZbXM_aM80PJzKLJUwnxkqZeuM', '2026-11-04 16:57:53.787018'),
 ('igak4v0f1dy1kplm6m2ultncm5yw2m4z', 'eyJwZXNzb2FfaWQiOjJ9:1xJa8X:GziZbQ8MSR9DF-P6G5H84yF7AKY4DN02gNyV_7bTzeo', '2026-11-04 17:30:01.245654'),
-('j9hogrouwj2g2z6zjd1ppskw7ei3wvre', 'eyJwZXNzb2FfaWQiOjF9:1xJaC9:l9o3C_eQvqXLeNfD5xf6duoLhAbAJ1dX_zUh4-SjLMk', '2026-11-04 17:33:45.463662'),
 ('kkmxdo1a0c2cdpuicxpnh8ye0253sul3', 'eyJwZXNzb2FfaWQiOjJ9:1xJa8Y:fPQ_rcudJ0Za2SChEAUohJNiQtvVXWVKhc9-0XjN4Dg', '2026-11-04 17:30:02.017071'),
 ('n30trsqyeiol243e8qsuvb2lmgkvka69', 'eyJwZXNzb2FfaWQiOjJ9:1xJZei:CUxKi3uxQqXS5wLcxBw7C15qYvrFChZxfclrEqgCIYo', '2026-11-04 16:59:12.161508'),
 ('q0ah09tz7kbq7pzzfew1ajqr8z26mls7', 'eyJwZXNzb2FfaWQiOjJ9:1xJa0q:-QmjvGWfdq2Zq459DP3tHCvlEJbk_CRWmbKZ71fBBEk', '2026-11-04 17:22:04.425454'),
-('xuj7yd9l5dtmnodmoqeggyercd0zx6tx', 'eyJwZXNzb2FfaWQiOjF9:1xJa8Y:VRz7U_RZpX-nCfJYIT4P5DmJmd08Anr5vJIasaYOLow', '2026-11-04 17:30:02.000259');
+('xuj7yd9l5dtmnodmoqeggyercd0zx6tx', 'eyJwZXNzb2FfaWQiOjF9:1xJa8Y:VRz7U_RZpX-nCfJYIT4P5DmJmd08Anr5vJIasaYOLow', '2026-11-04 17:30:02.000259'),
+('zfipj7ezp49v4k2cruoiwjde3elo8ysk', 'eyJwZXNzb2FfaWQiOjF9:1xJaiE:R7kcGr7Vsb6IjpMaN6JidGHB24Egozw4mBRE_gt23qM', '2026-11-04 18:06:54.991842');
 
 -- --------------------------------------------------------
 
@@ -389,6 +392,13 @@ CREATE TABLE `evento` (
   `geral` tinyint(1) NOT NULL,
   `id_pessoa` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Despejando dados para a tabela `evento`
+--
+
+INSERT INTO `evento` (`id`, `titulo`, `descricao`, `dt_inicio`, `dt_fim`, `tipo`, `geral`, `id_pessoa`) VALUES
+(1, 'Festa da Uva', 'evento de teste', '2026-10-22 18:10:00.000000', '2026-10-23 18:10:00.000000', 'evento', 1, 3);
 
 -- --------------------------------------------------------
 
@@ -417,7 +427,11 @@ INSERT INTO `log_auditoria` (`id`, `id_pessoa`, `tabela`, `id_registro`, `acao`,
 (5, 2, 'pessoa', '3', 'edicao', '{\"nome\": \"Daniel de Souza Freitas\", \"login\": \"dfreitas\", \"email\": \"daniel.freitas@insa.gov.br\", \"matricula\": \"3519383\"}', '{\"login\": \"dfreitas\", \"nome\": \"Daniel de Souza Freitas\", \"dt_nascimento\": \"1989-04-13\", \"dt_admissao\": \"2026-02-02\", \"dt_demissao\": null, \"matricula\": \"3519383\", \"cpf\": \"08052407486\", \"id_situacao\": 1, \"id_carreira\": 1, \"escolaridade\": \"Especialização\", \"titulacao\": null, \"id_responsavel\": 2, \"cep\": \"58416440\", \"logradouro\": \"Av. Floriano Peixoto\", \"complemento\": \"bloco c apto 001\", \"bairro\": \"Santa Rosa\", \"cidade\": \"Campina Grande\", \"estado\": \"PB\", \"telefone\": \"81985454499\", \"email\": \"daniel.freitas@insa.gov.br\", \"genero\": \"M\", \"nivel_acesso\": 1}', '127.0.0.1', '2026-10-21 20:09:19'),
 (6, 2, 'pessoa', '2', 'edicao', '{\"nome\": \"Administrador SIGTEC\", \"login\": \"admin.sigtec\", \"email\": \"admin.sigtec@example.invalid\", \"matricula\": \"ADMIN-SIGTEC\"}', '{\"login\": \"admin.sigtec\", \"nome\": \"Administrador SIGTEC\", \"dt_nascimento\": \"2001-10-12\", \"dt_admissao\": \"2026-10-20\", \"dt_demissao\": null, \"matricula\": \"ADMIN-SIGTEC\", \"cpf\": \"000.000.000-01\", \"id_situacao\": 1, \"id_carreira\": null, \"escolaridade\": null, \"titulacao\": null, \"id_responsavel\": null, \"cep\": null, \"logradouro\": null, \"complemento\": null, \"bairro\": null, \"cidade\": null, \"estado\": null, \"telefone\": null, \"email\": \"admin.sigtec@example.invalid\", \"genero\": \"f\", \"nivel_acesso\": 1}', '127.0.0.1', '2026-10-21 20:10:03'),
 (8, 3, 'pessoa', '3', 'edicao', '{\"nome\": \"Daniel de Souza Freitas\", \"login\": \"dfreitas\", \"email\": \"daniel.freitas@insa.gov.br\", \"matricula\": \"3519383\"}', '{\"login\": \"dfreitas\", \"nome\": \"Daniel de Souza Freitas\", \"dt_nascimento\": null, \"dt_admissao\": null, \"dt_demissao\": null, \"matricula\": \"3519383\", \"cpf\": \"08052407486\", \"id_situacao\": 1, \"id_carreira\": 1, \"escolaridade\": \"Especialização\", \"titulacao\": null, \"id_responsavel\": 2, \"cep\": \"58416440\", \"logradouro\": \"Av. Floriano Peixoto\", \"complemento\": \"bloco c apto 001\", \"bairro\": \"Santa Rosa\", \"cidade\": \"Campina Grande\", \"estado\": \"PB\", \"telefone\": \"81985454499\", \"email\": \"daniel.freitas@insa.gov.br\", \"genero\": \"M\", \"nivel_acesso\": 1}', '127.0.0.1', '2026-10-21 20:33:01'),
-(9, 3, 'pessoa', '1', 'edicao', '{\"nome\": \"Usuario de Teste SIGTEC\", \"login\": \"teste.sigtec\", \"email\": \"teste.sigtec@example.invalid\", \"matricula\": \"TESTE-SIGTEC\"}', '{\"login\": \"teste.sigtec\", \"nome\": \"Usuario de Teste SIGTEC\", \"dt_nascimento\": null, \"dt_admissao\": null, \"dt_demissao\": null, \"matricula\": \"TESTE-SIGTEC\", \"cpf\": \"000.000.000-00\", \"id_situacao\": 1, \"id_carreira\": null, \"escolaridade\": null, \"titulacao\": null, \"id_responsavel\": null, \"cep\": null, \"logradouro\": null, \"complemento\": null, \"bairro\": null, \"cidade\": null, \"estado\": null, \"telefone\": null, \"email\": \"teste.sigtec@example.invalid\", \"genero\": null, \"nivel_acesso\": 3}', '127.0.0.1', '2026-10-21 20:33:33');
+(9, 3, 'pessoa', '1', 'edicao', '{\"nome\": \"Usuario de Teste SIGTEC\", \"login\": \"teste.sigtec\", \"email\": \"teste.sigtec@example.invalid\", \"matricula\": \"TESTE-SIGTEC\"}', '{\"login\": \"teste.sigtec\", \"nome\": \"Usuario de Teste SIGTEC\", \"dt_nascimento\": null, \"dt_admissao\": null, \"dt_demissao\": null, \"matricula\": \"TESTE-SIGTEC\", \"cpf\": \"000.000.000-00\", \"id_situacao\": 1, \"id_carreira\": null, \"escolaridade\": null, \"titulacao\": null, \"id_responsavel\": null, \"cep\": null, \"logradouro\": null, \"complemento\": null, \"bairro\": null, \"cidade\": null, \"estado\": null, \"telefone\": null, \"email\": \"teste.sigtec@example.invalid\", \"genero\": null, \"nivel_acesso\": 3}', '127.0.0.1', '2026-10-21 20:33:33'),
+(10, 3, 'pessoa', '2', 'edicao', '{\"nome\": \"Administrador SIGTEC\", \"login\": \"admin.sigtec\", \"email\": \"admin.sigtec@example.invalid\", \"matricula\": \"ADMIN-SIGTEC\"}', '{\"login\": \"admin.sigtec\", \"nome\": \"Administrador SIGTEC\", \"dt_nascimento\": null, \"dt_admissao\": null, \"dt_demissao\": null, \"matricula\": \"ADMIN-SIGTEC\", \"cpf\": \"000.000.000-01\", \"id_situacao\": 1, \"id_carreira\": null, \"escolaridade\": null, \"titulacao\": null, \"id_responsavel\": null, \"cep\": null, \"logradouro\": null, \"complemento\": null, \"bairro\": null, \"cidade\": null, \"estado\": null, \"telefone\": null, \"email\": \"admin.sigtec@example.invalid\", \"genero\": \"f\", \"nivel_acesso\": 1}', '127.0.0.1', '2026-10-21 20:44:14'),
+(11, 3, 'pessoa', '3', 'edicao', '{\"nome\": \"Daniel de Souza Freitas\", \"login\": \"dfreitas\", \"email\": \"daniel.freitas@insa.gov.br\", \"matricula\": \"3519383\"}', '{\"login\": \"dfreitas\", \"nome\": \"Daniel de Souza Freitas\", \"dt_nascimento\": \"1989-04-13\", \"dt_admissao\": \"2026-02-02\", \"dt_demissao\": null, \"matricula\": \"3519383\", \"cpf\": \"08052407486\", \"id_situacao\": 1, \"id_carreira\": 1, \"escolaridade\": \"Ensino Superior\", \"titulacao\": \"Especialização\", \"id_responsavel\": 2, \"cep\": \"58416440\", \"logradouro\": \"Av. Floriano Peixoto\", \"complemento\": \"bloco c apto 001\", \"bairro\": \"Santa Rosa\", \"cidade\": \"Campina Grande\", \"estado\": \"PB\", \"telefone\": \"81985454499\", \"email\": \"daniel.freitas@insa.gov.br\", \"genero\": \"M\", \"nivel_acesso\": 1}', '127.0.0.1', '2026-10-21 20:52:59'),
+(12, 3, 'pessoa', '3', 'edicao', '{\"nome\": \"Daniel de Souza Freitas\", \"login\": \"dfreitas\", \"email\": \"daniel.freitas@insa.gov.br\", \"matricula\": \"3519383\"}', '{\"login\": \"dfreitas\", \"nome\": \"Daniel de Souza Freitas\", \"dt_nascimento\": \"1989-04-13\", \"dt_admissao\": \"2026-02-02\", \"dt_demissao\": null, \"matricula\": \"3519383\", \"cpf\": \"08052407486\", \"id_situacao\": 1, \"id_carreira\": 1, \"escolaridade\": \"Ensino Superior\", \"titulacao\": \"Especialização\", \"id_responsavel\": 2, \"cep\": \"58416440\", \"logradouro\": \"Av. Floriano Peixoto\", \"complemento\": \"bloco c apto 001\", \"bairro\": \"Santa Rosa\", \"cidade\": \"Campina Grande\", \"estado\": \"PB\", \"telefone\": \"81985454499\", \"email\": \"daniel.freitas@insa.gov.br\", \"genero\": \"M\", \"nivel_acesso\": 1}', '127.0.0.1', '2026-10-21 21:00:45'),
+(13, 3, 'pessoa', '2', 'edicao', '{\"nome\": \"Administrador SIGTEC\", \"login\": \"admin.sigtec\", \"email\": \"admin.sigtec@example.invalid\", \"matricula\": \"ADMIN-SIGTEC\"}', '{\"login\": \"admin.sigtec\", \"nome\": \"Administrador SIGTEC\", \"dt_nascimento\": \"2002-01-01\", \"dt_admissao\": \"2026-10-20\", \"dt_demissao\": null, \"matricula\": \"ADMIN-SIGTEC\", \"cpf\": \"000.000.000-01\", \"id_situacao\": 1, \"id_carreira\": 3, \"escolaridade\": \"\", \"titulacao\": \"\", \"id_responsavel\": null, \"cep\": null, \"logradouro\": null, \"complemento\": null, \"bairro\": null, \"cidade\": null, \"estado\": null, \"telefone\": null, \"email\": \"admin.sigtec@example.invalid\", \"genero\": \"F\", \"nivel_acesso\": 1}', '127.0.0.1', '2026-10-21 21:11:41');
 
 -- --------------------------------------------------------
 
@@ -485,8 +499,8 @@ CREATE TABLE `pessoa` (
 
 INSERT INTO `pessoa` (`id`, `login`, `senha`, `nome`, `dt_nascimento`, `dt_admissao`, `dt_demissao`, `matricula`, `cpf`, `id_situacao`, `id_carreira`, `escolaridade`, `titulacao`, `id_responsavel`, `cep`, `logradouro`, `numero`, `complemento`, `bairro`, `cidade`, `estado`, `telefone`, `ramal`, `email`, `genero`, `nivel_acesso`, `deletado`, `dt_criacao`, `dt_atualizacao`) VALUES
 (1, 'teste.sigtec', 'pbkdf2_sha256$1500000$okHyVTwztqkYLoOaAe4NEc$XxS6E0V25alque0KprqZ2p1eaFadmAWbWg+oj98nfgc=', 'Usuario de Teste SIGTEC', NULL, NULL, NULL, 'TESTE-SIGTEC', '000.000.000-00', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'teste.sigtec@example.invalid', NULL, 3, 0, '2026-10-20 20:45:47', '2026-10-21 20:33:33'),
-(2, 'admin.sigtec', 'pbkdf2_sha256$1500000$U9wBB67fdNZkHx1Jleu6zs$+x4eT7h851/PU7OZXREeRLkpkySxddlH86cvo1Ipr0k=', 'Administrador SIGTEC', '2001-10-12', '2026-10-20', NULL, 'ADMIN-SIGTEC', '000.000.000-01', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin.sigtec@example.invalid', 'f', 1, 0, '2026-10-21 19:57:51', '2026-10-21 17:29:42'),
-(3, 'dfreitas', 'pbkdf2_sha256$1500000$VINEpL4kaSx1Naj4jAGtMg$AJJLSXy+tXnfa1apzerdVXtfX9FTerVn9EusxMhi/oA=', 'Daniel de Souza Freitas', NULL, NULL, NULL, '3519383', '08052407486', 1, 1, 'Especialização', NULL, 2, '58416440', 'Av. Floriano Peixoto', NULL, 'bloco c apto 001', 'Santa Rosa', 'Campina Grande', 'PB', '81985454499', NULL, 'daniel.freitas@insa.gov.br', 'M', 1, 0, '2026-10-21 20:04:15', '2026-10-21 20:33:01');
+(2, 'admin.sigtec', 'pbkdf2_sha256$1500000$CG47WNK4XnEApU9weKIvrP$hMxRowdH6b9EqmQYP9YmhgodYo1Ir3kxYUP5sc07n4E=', 'Administrador SIGTEC', '2002-01-01', '2026-10-20', NULL, 'ADMIN-SIGTEC', '000.000.000-01', 1, 3, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin.sigtec@example.invalid', 'F', 1, 0, '2026-10-21 19:57:51', '2026-10-21 21:11:41'),
+(3, 'dfreitas', 'pbkdf2_sha256$1500000$VINEpL4kaSx1Naj4jAGtMg$AJJLSXy+tXnfa1apzerdVXtfX9FTerVn9EusxMhi/oA=', 'Daniel de Souza Freitas', '1989-04-13', '2026-02-02', NULL, '3519383', '08052407486', 1, 1, 'Ensino Superior', 'Especialização', 2, '58416440', 'Av. Floriano Peixoto', NULL, 'bloco c apto 001', 'Santa Rosa', 'Campina Grande', 'PB', '81985454499', NULL, 'daniel.freitas@insa.gov.br', 'M', 1, 0, '2026-10-21 20:04:15', '2026-10-21 21:00:45');
 
 --
 -- Acionadores `pessoa`
@@ -931,13 +945,13 @@ ALTER TABLE `django_migrations`
 -- AUTO_INCREMENT de tabela `evento`
 --
 ALTER TABLE `evento`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `log_auditoria`
 --
 ALTER TABLE `log_auditoria`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de tabela `pessoa`
