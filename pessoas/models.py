@@ -3,8 +3,6 @@ from django.db import models
 
 from core.models import EntidadeBase
 
-# Create your models here.
-
 
 class Contato(EntidadeBase):
     """
@@ -41,6 +39,17 @@ class Vinculo(EntidadeBase):
         TERCEIRIZADO = 'T', 'Terceirizado'
         SERVIDOR = 'S', 'Servidor'
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(data_fim__isnull=True)
+                    | models.Q(data_fim__gte=models.F('data_inicio'))
+                ),
+                name='vinculo_data_fim_maior_igual_inicio',
+            ),
+        ]
+
     pessoa = models.ForeignKey(
         'Pessoa', on_delete=models.CASCADE, related_name='vinculos'
     )
@@ -51,7 +60,7 @@ class Vinculo(EntidadeBase):
         max_length=1, choices=SituacaoVinculoEnum.choices
     )
     data_inicio = models.DateField()
-    data_fim = models.DateField(blank=True, null=True)
+    data_fim = models.DateField()
 
 
 class TitulacaoEnum(models.TextChoices):
@@ -149,6 +158,6 @@ class Pessoa(EntidadeBase):
     nome = models.CharField(max_length=255)
     cpf = models.CharField(max_length=11, unique=True)
     data_nascimento = models.DateField()
-    genero = models.CharField(
+    sexo = models.CharField(
         max_length=1, choices=SexoEnum.choices, default=SexoEnum.OUTRO
     )
