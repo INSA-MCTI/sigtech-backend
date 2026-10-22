@@ -3,6 +3,14 @@ from django.db import models
 from core.models import EntidadeBase
 
 
+class Processo(EntidadeBase):
+    numero = models.CharField(max_length=100, unique=True)
+    descricao = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.numero
+
+
 class Contrato(EntidadeBase):
     """
     Modelo que representa um contrato.
@@ -15,7 +23,7 @@ class Contrato(EntidadeBase):
 
     codigo = models.CharField(max_length=100, unique=True)
     # Unique=True se um processo só gera um contrato
-    numero_do_processo = models.CharField(max_length=100, unique=True)
+    processos = models.ManyToManyField(Processo, related_name='contratos')
     data_inicio = models.DateField()
     data_fim = models.DateField()
     valor_total = models.DecimalField(max_digits=14, decimal_places=2)
@@ -43,6 +51,10 @@ class Contrato(EntidadeBase):
                 condition=models.Q(valor_total__gte=0)
                 & models.Q(valor_da_parcela__gte=0),
                 name='contrato_valores_nao_negativos',
+            ),
+            models.CheckConstraint(
+                condition=models.Q(numero_de_parcelas__gt=0),
+                name='contrato_numero_parcelas_positivo',
             ),
         ]
 
