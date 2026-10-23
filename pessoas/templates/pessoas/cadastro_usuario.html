@@ -1,0 +1,173 @@
+{% extends "global/base.html" %}
+
+{% block title %}Cadastro de Pessoa - SIGTEC{% endblock %}
+
+{% block content_no_sidebar %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4>Cadastro de Pessoa</h4>
+        <p class="text-muted mb-0">
+            Preencha os dados para cadastrar uma nova pessoa.
+        </p>
+    </div>
+
+    <a href="{% url 'pessoas:index' %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+             role="alert">
+            {{ message }}
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Fechar">
+            </button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <div class="row g-4">
+
+        <!-- Dados pessoais -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <i class="bi bi-person me-2"></i>
+                    Dados Pessoais
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <label for="{{ form.nome.id_for_label }}"
+                               class="form-label">
+                            Nome completo
+                        </label>
+                        {{ form.nome }}
+                        {% for error in form.nome.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.cpf.id_for_label }}"
+                               class="form-label">
+                            CPF
+                        </label>
+                        {{ form.cpf }}
+                        {% for error in form.cpf.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.data_nascimento.id_for_label }}"
+                               class="form-label">
+                            Data de nascimento
+                        </label>
+                        {{ form.data_nascimento }}
+                        {% for error in form.data_nascimento.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.sexo.id_for_label }}"
+                               class="form-label">
+                            Sexo
+                        </label>
+                        {{ form.sexo }}
+                        {% for error in form.sexo.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados de contato -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <i class="bi bi-telephone me-2"></i>
+                    Dados de Contato
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}"
+                               class="form-label">
+                            E-mail
+                        </label>
+                        {{ form.email }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.telefone.id_for_label }}"
+                               class="form-label">
+                            Telefone
+                        </label>
+                        {{ form.telefone }}
+                        {% for error in form.telefone.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Ações -->
+    <div class="card mt-4">
+        <div class="card-body d-flex justify-content-end gap-2">
+
+            <a href="{% url 'pessoas:index' %}"
+               class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-person-plus me-1"></i>
+                Cadastrar pessoa
+            </button>
+
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}

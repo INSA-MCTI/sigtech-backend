@@ -23,8 +23,14 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            height: 100%;
             margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
             background: linear-gradient(
                 135deg,
@@ -37,7 +43,8 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+
     {% block content_no_sidebar %}{% endblock %}
 
     <script

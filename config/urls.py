@@ -21,6 +21,6 @@ from django.urls import include, path
 # Rotas de Cada URL
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('contratos.urls')),
-    path('pessoas/', include('pessoas.urls')),
+    #path('', include('contratos.urls')),
+    path('', include('pessoas.urls')),
 ]

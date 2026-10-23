@@ -4,7 +4,37 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect, render
 
-from pessoas.forms import LoginForm
+from pessoas.forms import CadastroForm, LoginForm
+from pessoas.models import Contato
+
+
+def cadastro_usuario(request):
+    form = CadastroForm()
+
+    if request.method == 'POST':
+        form = CadastroForm(request.POST)
+
+        if form.is_valid():
+            pessoa = form.save()
+
+            Contato.objects.create(
+                pessoa=pessoa,
+                email=form.cleaned_data['email'],
+                telefone=form.cleaned_data['telefone'],
+            )
+
+            messages.success(
+                request,
+                'Cadastro realizado com sucesso!',
+            )
+
+            return redirect('index_pessoas')
+
+    return render(
+        request,
+        'pessoas/cadastro_usuario.html',
+        {'form': form},
+    )
 
 
 def login_usuario(request):
@@ -32,4 +62,4 @@ def login_usuario(request):
 
 
 def index_pessoas(request):
-    return render(request, 'pessoas/index.html')
+    return render(request, 'pessoas/inicio.html')
