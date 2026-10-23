@@ -3,29 +3,89 @@
 {% block title %}Login - SIGTEC{% endblock %}
 
 {% block content_no_sidebar %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-4">
-                    <i class="bi bi-gear-fill text-primary"></i> SIGTEC
-                </h3>
-                <p class="text-center text-muted">Gestão de Pessoas</p>
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">Login</label>
-                        {{ form.login }}
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Senha</label>
-                        {{ form.senha }}
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-                </form>
+
+<div class="container-fluid px-4 pt-3">
+
+    <!-- Botão voltar -->
+    <div class="mb-3">
+        <a href="{% url 'pessoas:inicio' %}"
+           class="btn btn-primary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar
+        </a>
+    </div>
+
+    <!-- Formulário de login -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-sm-8 col-md-5 col-lg-4">
+
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4 p-md-5">
+
+                    <h3 class="text-center mb-2">
+                        <i class="bi bi-gear-fill text-primary"></i>
+                        SIGTEC
+                    </h3>
+
+                    <p class="text-center text-muted mb-4">
+                        Gestão de Pessoas
+                    </p>
+
+                    <hr class="mb-4">
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.login.id_for_label }}"
+                                   class="form-label">
+                                Login
+                            </label>
+
+                            {{ form.login }}
+
+                            {% for error in form.login.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.senha.id_for_label }}"
+                                   class="form-label">
+                                Senha
+                            </label>
+
+                            {{ form.senha }}
+
+                            {% for error in form.senha.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <button type="submit"
+                                class="btn btn-primary w-100 py-2">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            Entrar
+                        </button>
+
+                    </form>
+
+                </div>
             </div>
+
         </div>
     </div>
-</div>
-{% endblock %}
 
+</div>
+
+{% endblock %}

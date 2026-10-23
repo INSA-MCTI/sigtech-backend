@@ -13,7 +13,7 @@ class Contato(EntidadeBase):
     pessoa = models.ForeignKey(
         'Pessoa', on_delete=models.CASCADE, related_name='contatos'
     )
-    telefone = models.CharField(max_length=15)
+    telefone = models.CharField(max_length=11, unique=True)
     ramal = models.CharField(max_length=10, blank=True, null=True)
     email = models.EmailField(unique=True)
 

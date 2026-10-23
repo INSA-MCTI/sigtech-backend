@@ -28,7 +28,7 @@ def cadastro_usuario(request):
                 'Cadastro realizado com sucesso!',
             )
 
-            return redirect('index_pessoas')
+            return redirect('pessoas:inicio')
 
     return render(
         request,
@@ -52,7 +52,7 @@ def login_usuario(request):
 
             if usuario is not None:
                 auth_login(request, usuario)
-                return redirect('index')
+                return redirect('pessoas:inicio')
             messages.error(request, 'Login ou senha inválidos.')
 
         else:
