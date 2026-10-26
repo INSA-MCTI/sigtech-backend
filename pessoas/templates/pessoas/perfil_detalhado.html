@@ -1,0 +1,147 @@
+{% extends "global/base.html" %}
+{# Exibe os dados cadastrais, vínculos de cargo e unidade e arquivos da pessoa, com ações conforme o perfil de acesso. #}
+
+{% block title %}{{ p.nome }} - SIGTEC{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>{{ p.nome }}</h4>
+    <div>
+        {% if pessoa.perfil_acesso == 'adm' or pessoa.perfil_acesso == 'rh' %}
+        <a href="{% url 'pessoas:pessoa_editar' p.pk %}" class="btn btn-warning btn-sm">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        {% endif %}
+        <a href="{% url 'pessoas:pessoa_lista' %}" class="btn btn-outline-secondary btn-sm">Voltar</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Dados Pessoais</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><th width="35%">Login</th><td>{{ p.login }}</td></tr>
+                    <tr><th>Matrícula</th><td>{{ p.matricula }}</td></tr>
+                    <tr><th>CPF</th><td>{{ p.cpf }}</td></tr>
+                    <tr><th>E-mail</th><td>{{ p.email }}</td></tr>
+                    <tr><th>Telefone</th><td>{{ p.telefone }}</td></tr>
+                    <tr><th>Nascimento</th><td>{{ p.dt_nascimento|date:"d/m/Y" }}</td></tr>
+                    <tr><th>Gênero</th><td>{{ p.genero }}</td></tr>
+                    <tr><th>Situação</th><td>{% if p.id_situacao %}{{ p.id_situacao.descricao }}{% endif %}</td></tr>
+                    <tr><th>Carreira</th><td>{% if p.id_carreira %}{{ p.id_carreira.descricao }}{% endif %}</td></tr>
+                    <tr><th>Admissão</th><td>{{ p.dt_admissao|date:"d/m/Y" }}</td></tr>
+                    <tr><th>Nível Acesso</th><td>{% if p.nivel_acesso %}{{ p.nivel_acesso.descricao }}{% endif %}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Endereço</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><th width="35%">CEP</th><td>{{ p.cep }}</td></tr>
+                    <tr><th>Logradouro</th><td>{{ p.logradouro }}</td></tr>
+                    <tr><th>Complemento</th><td>{{ p.complemento }}</td></tr>
+                    <tr><th>Bairro</th><td>{{ p.bairro }}</td></tr>
+                    <tr><th>Cidade</th><td>{{ p.cidade }}</td></tr>
+                    <tr><th>Estado</th><td>{{ p.estado }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cargos -->
+<div class="card mt-4">
+    <div class="card-header d-flex justify-content-between">
+        <span>Cargos</span>
+        {% if pessoa.perfil_acesso == 'adm' or pessoa.perfil_acesso == 'rh' %}
+        <a href="{% url 'pessoas:pessoa_cargo_add' p.pk %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus"></i> Adicionar
+        </a>
+        {% endif %}
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Cargo</th><th>Início</th><th>Fim</th><th>Atual</th></tr>
+            </thead>
+            <tbody>
+                {% for c in cargos %}
+                <tr>
+                    <td>{{ c.cargo }}</td>
+                    <td>{{ c.dt_inicio|date:"d/m/Y" }}</td>
+                    <td>{{ c.dt_fim|date:"d/m/Y" }}</td>
+                    <td>{% if c.atual %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-muted text-center">Nenhum cargo registrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Unidades -->
+<div class="card mt-4">
+    <div class="card-header d-flex justify-content-between">
+        <span>Unidades</span>
+        {% if pessoa.perfil_acesso == 'adm' or pessoa.perfil_acesso == 'rh' %}
+        <a href="{% url 'pessoas:pessoa_unidade_add' p.pk %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus"></i> Adicionar
+        </a>
+        {% endif %}
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Unidade</th><th>Início</th><th>Fim</th><th>Chefia</th><th>Atual</th></tr>
+            </thead>
+            <tbody>
+                {% for u in unidades %}
+                <tr>
+                    <td>{{ u.unidade }}</td>
+                    <td>{{ u.dt_inicio|date:"d/m/Y" }}</td>
+                    <td>{{ u.dt_fim|date:"d/m/Y" }}</td>
+                    <td>{% if u.chefia %}<i class="bi bi-check-circle text-success"></i>{% endif %}</td>
+                    <td>{% if u.atual %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-muted text-center">Nenhuma unidade registrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Arquivos -->
+<div class="card mt-4">
+    <div class="card-header d-flex justify-content-between">
+        <span>Arquivos</span>
+        <a href="{% url 'pessoas:arquivo_upload' p.pk %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-upload"></i> Upload
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Descrição</th><th>Tipo</th><th>Arquivo</th></tr>
+            </thead>
+            <tbody>
+                {% for a in arquivos %}
+                <tr>
+                    <td>{{ a.descricao }}</td>
+                    <td><span class="badge bg-info">{{ a.get_tipo_display }}</span></td>
+                    <td><a href="{{ a.arquivo.url }}" target="_blank" class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i> Download</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="text-muted text-center">Nenhum arquivo.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

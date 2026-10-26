@@ -12,4 +12,5 @@ urlpatterns = [
         views.cadastro_usuario,
         name='cadastro_usuario',
     ),
+    path('perfil_detalhado/', views.perfil_detalhado, name='perfil_detalhado'),
 ]

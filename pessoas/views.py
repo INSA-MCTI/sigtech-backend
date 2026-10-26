@@ -1,11 +1,37 @@
 # Create your views here.
+import unicodedata
+
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect, render
 
 from pessoas.forms import CadastroForm, LoginForm
-from pessoas.models import Contato
+from pessoas.models import Contato, Usuario
+
+User = get_user_model()
+
+
+def _gera_usuario(nome_completo):
+    partes = nome_completo.strip().split()
+
+    NUMERO_PARTES = 2
+
+    if len(partes) < NUMERO_PARTES:
+        raise ValueError('Informe o nome e pelo menos um sobrenome')
+
+    nome = partes[0]
+    sobrenome = partes[1]
+    texto = f'{nome}.{sobrenome}'.lower()
+
+    texto = unicodedata.normalize('NFKD', texto)
+    texto = ''.join(
+        caractere
+        for caractere in texto
+        if not unicodedata.combining(caractere)
+    )
+
+    return texto
 
 
 def cadastro_usuario(request):
@@ -23,6 +49,17 @@ def cadastro_usuario(request):
                 telefone=form.cleaned_data['telefone'],
             )
 
+            usuario = _gera_usuario(pessoa.nome)
+
+            conta = User.objects.create_user(
+                username=usuario,
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['senha'],
+                first_name=pessoa.nome,
+            )
+
+            Usuario.objects.create(pessoa=pessoa, conta=conta)
+
             messages.success(
                 request,
                 'Cadastro realizado com sucesso!',
@@ -38,9 +75,9 @@ def cadastro_usuario(request):
 
 
 def login_usuario(request):
-
-    form = LoginForm()
-
+    """
+    Rever Esse tópico
+    """
     if request.method == 'POST':
         form = LoginForm(request.POST)
 
@@ -52,13 +89,18 @@ def login_usuario(request):
 
             if usuario is not None:
                 auth_login(request, usuario)
-                return redirect('pessoas:inicio')
-            messages.error(request, 'Login ou senha inválidos.')
+                return redirect('pessoas:perfil_detalhado')
 
-        else:
-            form = LoginForm()
+            form.add_error(None, 'Dados Inválidos')
+
+    else:
+        form = LoginForm()
 
     return render(request, 'pessoas/login.html', {'form': form})
+
+
+def perfil_detalhado(request):
+    return render(request, 'pessoas/perfil_detalhado.html')
 
 
 def index_pessoas(request):

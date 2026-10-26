@@ -160,7 +160,7 @@
         {% endfor %}
     {% endif %}
 
-    <form method="post">
+    <form method="POST">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
@@ -272,6 +272,42 @@
                     </div>
                 </div>
             </div>
+
+
+            <div class='card-body'>
+                <div class='row g-3'>
+                    <div class='col-12 col-md-6'>
+                        <label for="{{ form.senha.id_for_label }}"
+                        class = 'form-label'>
+                        Senha
+                        </label>
+
+                        {{ form.senha }}
+                        
+                        {% for error in form.senha.errors %}}
+                            <div class='text-danger small mt-1'>
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class='col-12 col-md-6'>
+                        <label for='{{ form.confirmar_senha.id_for_label }}' class='form-label'>
+                            Confirmar senha
+                        </label>
+
+                        {{ form.confirmar_senha }}
+
+                        {% for error in form.confirmar_senha.errors %}
+                            <div class='text-danger small mt-1'>
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
 
         </div>
 

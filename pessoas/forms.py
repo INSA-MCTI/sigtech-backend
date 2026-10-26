@@ -5,8 +5,8 @@ from pessoas.models import Contato, Pessoa
 
 
 class LoginForm(forms.Form):
-    login = forms.CharField(label='Login', max_length=100)
-    senha = forms.CharField(label='Senha')
+    login = forms.CharField(label='Login', max_length=20)
+    senha = forms.CharField(label='Senha', widget=forms.PasswordInput())
 
 
 class CadastroForm(forms.ModelForm):
@@ -23,6 +23,26 @@ class CadastroForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={'class': 'form-control', 'placeholder': '(00) 00000-0000'}
         ),
+    )
+    senha = forms.CharField(
+        label='Senha',
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Digite sua senha',
+            }
+        ),
+        min_length=8,
+    )
+    confirmar_senha = forms.CharField(
+        label='Confirmar senha',
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Digite sua senha',
+            }
+        ),
+        min_length=8,
     )
 
     class Meta:
@@ -50,6 +70,17 @@ class CadastroForm(forms.ModelForm):
             'sexo': forms.Select(attrs={'class': 'form-select'}),
         }
 
+    def clean(self):
+        dados = super().clean()
+        senha_ = dados.get('senha')
+        confirmar_senha_ = dados.get('confirmar_senha')
+
+        if senha_ and confirmar_senha_ and senha_ != confirmar_senha_:
+            self.add_error(
+                'confirmar_senha',
+                'As senhas digitadas não coincidem',
+            )
+        return dados
 
     @staticmethod
     def _verifica_digitos_telefone(telefone):
