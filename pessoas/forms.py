@@ -3,10 +3,23 @@ from django.core.exceptions import ValidationError
 
 from pessoas.models import Contato, Pessoa
 
-
+# Estilo do formulário de login com Bootstrap 5	
 class LoginForm(forms.Form):
-    login = forms.CharField(label='Login', max_length=20)
-    senha = forms.CharField(label='Senha', widget=forms.PasswordInput())
+    login = forms.CharField(
+        label='Login',
+        max_length=20,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'autocomplete': 'username',
+        }),
+    )
+    senha = forms.CharField(
+        label='Senha',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'autocomplete': 'current-password',
+        }),
+    )
 
 
 class CadastroForm(forms.ModelForm):
