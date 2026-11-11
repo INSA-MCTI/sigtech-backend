@@ -12,5 +12,6 @@ urlpatterns = [
         views.cadastro_usuario,
         name='cadastro_usuario',
     ),
-    path('perfil_detalhado/', views.perfil_detalhado, name='perfil_detalhado'),
+    path('agenda_usuario/', views.agenda_usuario, name='agenda_usuario'),
+    path('criar_evento/', views.criar_evento, name='criar_evento'),
 ]

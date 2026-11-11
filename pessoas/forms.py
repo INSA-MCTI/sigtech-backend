@@ -1,25 +1,101 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from pessoas.models import Contato, Pessoa
+from pessoas.models import Contato, Pessoa, Evento
 
-# Estilo do formulário de login com Bootstrap 5	
+
+# Estilo do formulário de login com Bootstrap 5
 class LoginForm(forms.Form):
     login = forms.CharField(
         label='Login',
         max_length=20,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'autocomplete': 'username',
-        }),
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'autocomplete': 'username',
+            }
+        ),
     )
     senha = forms.CharField(
         label='Senha',
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'autocomplete': 'current-password',
-        }),
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'autocomplete': 'current-password',
+            }
+        ),
     )
+
+
+class EventoForm(forms.ModelForm):
+
+    dt_inicio = forms.DateTimeField(
+        label="Data/Hora Início",
+        input_formats=["%Y-%m-%dT%H:%M"],
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={
+                "type": "datetime-local",
+                "class": "form-control",
+            },
+        ),
+    )
+
+    dt_fim = forms.DateTimeField(
+        label="Data/Hora Fim",
+        input_formats=["%Y-%m-%dT%H:%M"],
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={
+                "type": "datetime-local",
+                "class": "form-control",
+            },
+        ),
+    )
+
+    class Meta:
+        model = Evento
+
+        fields = [
+            "titulo",
+            "tipo",
+            "dt_inicio",
+            "dt_fim",
+            "geral",
+            "descricao",
+        ]
+
+        widgets = {
+            "titulo": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+            "tipo": forms.Select(
+                attrs={"class": "form-select"}
+            ),
+            "geral": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
+            "descricao": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                }
+            ),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        inicio = cleaned_data.get("dt_inicio")
+        fim = cleaned_data.get("dt_fim")
+
+        if inicio and fim and fim < inicio:
+            self.add_error(
+                "dt_fim",
+                "A data de término não pode ser anterior à data de início.",
+            )
+
+        return cleaned_data
 
 
 class CadastroForm(forms.ModelForm):

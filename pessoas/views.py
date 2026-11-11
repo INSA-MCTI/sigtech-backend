@@ -6,8 +6,8 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect, render
 
-from pessoas.forms import CadastroForm, LoginForm
-from pessoas.models import Contato, Usuario
+from pessoas.forms import CadastroForm, EventoForm, LoginForm
+from pessoas.models import Contato, Usuario, Evento
 
 User = get_user_model()
 
@@ -72,6 +72,33 @@ def cadastro_usuario(request):
         'pessoas/cadastro_usuario.html',
         {'form': form},
     )
+
+
+def agenda_usuario(request):
+    return render(request, 'pessoas/agenda_usuario.html')
+
+
+def criar_evento(request):
+    form = EventoForm()
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            evento = form.save()
+            
+            messages.success(
+                request,
+                "Evento cadastrado com sucesso"
+            )
+            
+            return redirect('pessoas:inicio')
+        
+        else:
+            form = EventoForm()
+    return render(request, 'pessoas/criar_evento.html', {'form': form})
+
+
+def evento_ferias(request):
+    return render(request, 'pessoas/evento_ferias.html')
 
 
 def login_usuario(request):

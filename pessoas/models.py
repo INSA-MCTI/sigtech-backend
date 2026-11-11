@@ -4,6 +4,23 @@ from django.db import models
 from core.models import EntidadeBase
 
 
+class Evento(EntidadeBase):
+
+    class TipoEvento(models.TextChoices):
+        LICENCA = 'L', 'Licença'
+        TREINAMENTO = 'T', 'Treinamento'
+        FERIAS = 'F', 'Férias'
+
+    titulo = models.CharField(max_length=100)
+    tipo = models.CharField(
+        max_length=1, choices=TipoEvento.choices  
+    )
+    criador = ...
+    dt_inicio = models.DateTimeField(verbose_name='Data Inicial')
+    dt_fim = models.DateTimeField(verbose_name='Data Final')
+    geral = models.BooleanField(default=False)
+    descricao = models.TextField(blank=True)
+
 class Contato(EntidadeBase):
     """
     Modelo que representa um contato. Cria a
