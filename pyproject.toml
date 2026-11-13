@@ -38,6 +38,7 @@ run = "python manage.py runserver"
 test = "pytest -s -x --cov=config --cov-report=term-missing -vv"
 pre_test = "task lint"
 post_test = "coverage report"
+superuser = "python manage.py createsuperuser"
 
 lint = "ruff check . --fix"
 format = "ruff format ."
