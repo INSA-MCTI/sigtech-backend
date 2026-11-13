@@ -4,7 +4,12 @@ import unicodedata
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as auth_login
-from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from pessoas.forms import CadastroForm, EventoForm, LoginForm
 from pessoas.models import Contato, Usuario, Evento
@@ -74,27 +79,77 @@ def cadastro_usuario(request):
     )
 
 
+def _eventos_visiveis(usuario):
+    eventos = Evento.objects.select_related('criador')
+    if not usuario.is_staff:
+        eventos = eventos.filter(Q(criador=usuario) | Q(geral=True))
+    return eventos.order_by('dt_inicio', 'pk')
+
+
+def _pode_gerenciar_evento(usuario, evento):
+    return usuario.is_staff or evento.criador_id == usuario.pk
+
+
+@login_required(login_url='pessoas:login')
 def agenda_usuario(request):
-    return render(request, 'pessoas/agenda_usuario.html')
+    pagina = Paginator(_eventos_visiveis(request.user), 20).get_page(
+        request.GET.get('pagina')
+    )
+    for evento in pagina:
+        evento.pode_gerenciar = _pode_gerenciar_evento(request.user, evento)
+    return render(request, 'pessoas/agenda_usuario.html', {
+        'eventos': pagina, 'pagina': pagina,
+    })
 
 
+@login_required(login_url='pessoas:login')
 def criar_evento(request):
     form = EventoForm()
     if request.method == 'POST':
         form = EventoForm(request.POST)
         if form.is_valid():
-            evento = form.save()
+            evento = form.save(commit=False)
+            evento.criador = request.user
+            evento.save()
             
             messages.success(
                 request,
                 "Evento cadastrado com sucesso"
             )
             
-            return redirect('pessoas:inicio')
-        
-        else:
-            form = EventoForm()
-    return render(request, 'pessoas/criar_evento.html', {'form': form})
+            return redirect('pessoas:agenda_usuario')
+    return render(request, 'pessoas/criar_evento.html', {
+        'form': form, 'titulo': 'Novo evento',
+    })
+
+
+@login_required(login_url='pessoas:login')
+def editar_evento(request, pk):
+    evento = get_object_or_404(_eventos_visiveis(request.user), pk=pk)
+    if not _pode_gerenciar_evento(request.user, evento):
+        return HttpResponseForbidden('Você não pode editar este evento.')
+    form = EventoForm(
+        request.POST if request.method == 'POST' else None,
+        instance=evento,
+    )
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Evento atualizado com sucesso.')
+        return redirect('pessoas:agenda_usuario')
+    return render(request, 'pessoas/criar_evento.html', {
+        'form': form, 'titulo': 'Editar evento',
+    })
+
+
+@login_required(login_url='pessoas:login')
+@require_POST
+def excluir_evento(request, pk):
+    evento = get_object_or_404(_eventos_visiveis(request.user), pk=pk)
+    if not _pode_gerenciar_evento(request.user, evento):
+        return HttpResponseForbidden('Você não pode excluir este evento.')
+    evento.delete()
+    messages.success(request, 'Evento excluído com sucesso.')
+    return redirect('pessoas:agenda_usuario')
 
 
 def evento_ferias(request):
@@ -116,7 +171,7 @@ def login_usuario(request):
 
             if usuario is not None:
                 auth_login(request, usuario)
-                return redirect('pessoas:perfil_detalhado')
+                return redirect('pessoas:agenda_usuario')
 
             form.add_error(None, 'Dados Inválidos')
 

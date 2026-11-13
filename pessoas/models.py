@@ -15,7 +15,13 @@ class Evento(EntidadeBase):
     tipo = models.CharField(
         max_length=1, choices=TipoEvento.choices  
     )
-    criador = ...
+    criador = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='eventos_criados',
+    )
     dt_inicio = models.DateTimeField(verbose_name='Data Inicial')
     dt_fim = models.DateTimeField(verbose_name='Data Final')
     geral = models.BooleanField(default=False)

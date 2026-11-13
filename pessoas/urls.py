@@ -14,4 +14,6 @@ urlpatterns = [
     ),
     path('agenda_usuario/', views.agenda_usuario, name='agenda_usuario'),
     path('criar_evento/', views.criar_evento, name='criar_evento'),
+    path('eventos/<int:pk>/editar/', views.editar_evento, name='editar_evento'),
+    path('eventos/<int:pk>/excluir/', views.excluir_evento, name='excluir_evento'),
 ]
